@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word Study: precise 字源與字族互動學習</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface-subtle: #f8fafc;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --primary-border: #bfdbfe;
+
+      /* Part of speech color coding */
+      --adj-color: #0284c7;
+      --adj-bg: #f0f9ff;
+      --adj-border: #bae6fd;
+
+      --noun-color: #059669;
+      --noun-bg: #ecfdf5;
+      --noun-border: #a7f3d0;
+
+      --adv-color: #7c3aed;
+      --adv-bg: #f5f3ff;
+      --adv-border: #ddd6fe;
+
+      --accent-amber: #d97706;
+      --accent-amber-bg: #fffbeb;
+      --accent-amber-border: #fde68a;
+
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+
+      --success: #16a34a;
+      --success-bg: #f0fdf4;
+      --success-border: #bbf7d0;
+
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding-bottom: 4rem;
+    }
+
+    /* Header & Top Controls */
+    header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: #ffffff;
+      padding: 2rem 1.25rem 1.75rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .topic-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    h1 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      margin-bottom: 0.65rem;
+      letter-spacing: -0.01em;
+    }
+
+    .intro-text {
+      font-size: 1.02rem;
+      color: rgba(255, 255, 255, 0.94);
+      max-width: 780px;
+    }
+
+    /* Sticky Navigation & Study Mode Bar */
+    .control-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .control-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0.65rem 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.35rem;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      background: var(--surface-subtle);
+      color: var(--text);
+    }
+
+    .tab-btn.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary-border);
+    }
+
+    /* Recall / Study Mode Toggle */
+    .study-toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+    }
+
+    .study-toggle-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 38px;
+      height: 22px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #cbd5e1;
+      transition: 0.25s;
+      border-radius: 999px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.25s;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(16px);
+    }
+
+    /* Recall blur / hide styling */
+    body.recall-mode .recall-target {
+      background-color: #e2e8f0;
+      color: transparent !important;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      transition: all 0.2s ease;
+      padding: 0.05rem 0.35rem;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    body.recall-mode .recall-target::after {
+      content: "點擊顯示";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #475569;
+      letter-spacing: 0.03em;
+    }
+
+    body.recall-mode .recall-target.revealed {
+      background-color: #fef9c3;
+      color: inherit !important;
+      user-select: text;
+    }
+
+    body.recall-mode .recall-target.revealed::after {
+      display: none;
+    }
+
+    .recall-banner {
+      display: none;
+      background: #fefce8;
+      border-bottom: 1px solid #fde047;
+      color: #854d0e;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.45rem 1rem;
+    }
+
+    body.recall-mode .recall-banner {
+      display: block;
+    }
+
+    /* Main Container */
+    main {
+      max-width: 960px;
+      margin: 1.5rem auto 0;
+      padding: 0 1rem;
+    }
+
+    .section-panel {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .section-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards & Typography */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .core-concept-card {
+      background: linear-gradient(to right, #eff6ff, #ffffff);
+      border-left: 5px solid var(--primary);
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.12rem;
+      font-weight: 700;
+      margin-bottom: 0.65rem;
+      color: #1e293b;
+    }
+
+    p {
+      margin-bottom: 0.8rem;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    .en-highlight {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1rem 0;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    th {
+      background: var(--surface-subtle);
+      font-weight: 700;
+      color: #334155;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Lists */
+    ul.styled-list {
+      margin: 0.5rem 0 0.9rem 1.25rem;
+    }
+
+    ul.styled-list li {
+      margin-bottom: 0.4rem;
+    }
+
+    /* Interactive Stage Stepper (Etymology & Evolution) */
+    .stage-box {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+    }
+
+    .stage-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .stage-tabs {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stage-btn {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .stage-btn:hover {
+      border-color: var(--primary-border);
+    }
+
+    .stage-btn.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.12);
+    }
+
+    .stage-step-num {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--primary);
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+
+    .stage-step-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .stage-detail {
+      background: var(--surface);
+      border: 1px solid var(--primary-border);
+      border-radius: 10px;
+      padding: 1.15rem;
+    }
+
+    /* Formula Chain */
+    .flow-chain {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      margin: 1.15rem 0;
+      padding: 1rem;
+      background: var(--surface-subtle);
+      border-radius: 12px;
+      border: 1px dashed #cbd5e1;
+    }
+
+    .flow-node {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      text-align: center;
+      flex: 1 1 200px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .flow-node strong {
+      display: block;
+      color: var(--primary);
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .flow-arrow {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    /* Part of Speech Cards */
+    .pos-card {
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.35rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pos-adj {
+      border-top: 5px solid var(--adj-color);
+    }
+
+    .pos-noun {
+      border-top: 5px solid var(--noun-color);
+    }
+
+    .pos-adv {
+      border-top: 5px solid var(--adv-color);
+    }
+
+    .pos-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pos-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .pos-badge {
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+    }
+
+    .badge-adj {
+      background: var(--adj-bg);
+      color: var(--adj-color);
+      border: 1px solid var(--adj-border);
+    }
+
+    .badge-noun {
+      background: var(--noun-bg);
+      color: var(--noun-color);
+      border: 1px solid var(--noun-border);
+    }
+
+    .badge-adv {
+      background: var(--adv-bg);
+      color: var(--adv-color);
+      border: 1px solid var(--adv-border);
+    }
+
+    .def-box {
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .def-adj { background: var(--adj-bg); border: 1px solid var(--adj-border); }
+    .def-noun { background: var(--noun-bg); border: 1px solid var(--noun-border); }
+    .def-adv { background: var(--adv-bg); border: 1px solid var(--adv-border); }
+
+    .example-list {
+      list-style: none;
+      margin: 0.6rem 0 1rem;
+    }
+
+    .example-list li {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .example-en {
+      font-weight: 700;
+      color: #0f172a;
+      display: block;
+    }
+
+    .example-zh {
+      color: var(--text-muted);
+      font-size: 0.93rem;
+    }
+
+    .memory-tip {
+      background: var(--accent-amber-bg);
+      border: 1px solid var(--accent-amber-border);
+      border-radius: 10px;
+      padding: 0.95rem 1.1rem;
+      margin-top: 0.85rem;
+    }
+
+    .memory-tip-title {
+      font-weight: 800;
+      color: var(--accent-amber);
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    /* Word Family 3-Column Grid */
+    .family-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 720px) {
+      .family-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .family-item {
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .family-item.adj { background: var(--adj-bg); border-color: var(--adj-border); }
+    .family-item.noun { background: var(--noun-bg); border-color: var(--noun-border); }
+    .family-item.adv { background: var(--adv-bg); border-color: var(--adv-border); }
+
+    .family-word {
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+    }
+
+    .family-pos {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 0.45rem;
+    }
+
+    .family-meaning {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    /* Spelling Alert Box */
+    .pitfall-box {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      margin-top: 1rem;
+    }
+
+    .pitfall-title {
+      color: var(--danger);
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .pitfall-box ol {
+      margin-left: 1.25rem;
+    }
+
+    .pitfall-box li {
+      margin-bottom: 0.35rem;
+    }
+
+    /* Quiz Styling */
+    .quiz-header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1.1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .quiz-subtitle {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--primary);
+    }
+
+    .quiz-progress-badge {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--primary-border);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+    }
+
+    .question-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.15rem;
+      margin-bottom: 1rem;
+      background: var(--surface);
+      transition: border-color 0.2s ease;
+    }
+
+    .question-card.correct {
+      border-color: var(--success);
+      background: #fafffc;
+    }
+
+    .question-card.incorrect {
+      border-color: var(--danger);
+      background: #fffafa;
+    }
+
+    .question-text {
+      font-weight: 700;
+      font-size: 1.02rem;
+      margin-bottom: 0.75rem;
+      color: #0f172a;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+    }
+
+    @media (max-width: 640px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0.65rem 0.9rem;
+      border: 2px solid var(--border);
+      border-radius: 9px;
+      background: var(--surface);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .option-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .option-btn.selected {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .option-btn.correct-choice {
+      border-color: var(--success) !important;
+      background: var(--success) !important;
+      color: #ffffff !important;
+    }
+
+    .option-btn.wrong-choice {
+      border-color: var(--danger) !important;
+      background: var(--danger) !important;
+      color: #ffffff !important;
+    }
+
+    .feedback-msg {
+      margin-top: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: none;
+    }
+
+    .feedback-msg.show {
+      display: block;
+    }
+
+    .feedback-msg.ok {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid var(--success-border);
+    }
+
+    .feedback-msg.err {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+    }
+
+    .quiz-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+      transition: background 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1.2rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-subtle);
+    }
+
+    .score-summary {
+      margin-top: 1.15rem;
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+      background: var(--primary-light);
+      border: 1px solid var(--primary-border);
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #1e3a8a;
+      display: none;
+    }
+
+    .score-summary.show {
+      display: block;
+    }
+
+    /* Final 30-Second Summary Card */
+    .final-summary-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #f8fafc;
+      border-radius: var(--radius);
+      padding: 1.65rem;
+      margin-top: 1.5rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .final-summary-card h2 {
+      color: #ffffff;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      padding-bottom: 0.65rem;
+    }
+
+    .final-summary-card ul {
+      margin: 0.75rem 0 1.1rem 1.25rem;
+    }
+
+    .final-summary-card li {
+      margin-bottom: 0.45rem;
+    }
+
+    .final-etymology-box {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .final-etymology-chain {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #93c5fd;
+      font-weight: 700;
+      margin: 0.35rem 0 0.65rem;
+      font-size: 0.95rem;
+    }
+
+    /* Bottom Navigation Buttons inside sections */
+    .section-footer-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="badge-row">
+        <span class="topic-pill">📖 核心字彙深度學習 • Core Vocabulary</span>
+      </div>
+      <h1>核心字：precise</h1>
+      <p class="intro-text">
+        今次我們以 <span style="font-weight:800; text-decoration:underline;">precise</span> 作為核心字，從它的字源開始，理解它為甚麼有「準確、精確」的意思，再學習它的名詞及副詞形式。
+      </p>
+    </div>
+  </header>
+
+  <div class="control-bar">
+    <div class="control-inner">
+      <nav class="nav-tabs" aria-label="課程章節導覽">
+        <button class="tab-btn active" data-target="sec-all">全部內容總覽</button>
+        <button class="tab-btn" data-target="sec-etymology">1-2. 字源與演變</button>
+        <button class="tab-btn" data-target="sec-pos">3. 三種詞性詳解</button>
+        <button class="tab-btn" data-target="sec-family">4-5. 字族與拼字</button>
+        <button class="tab-btn" data-target="sec-quiz">6. 小測驗與總結</button>
+      </nav>
+
+      <div class="study-toggle-wrap" title="開啟後會隱藏中文釋義與翻譯，點擊個別區塊即可偷看答案">
+        <label class="study-toggle-label" for="recallToggle">
+          <span>🧠 自我測驗模式 (Recall Mode)</span>
+          <span class="switch">
+            <input type="checkbox" id="recallToggle" />
+            <span class="slider"></span>
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="recall-banner">
+    💡 自我測驗模式已開啟：中文解釋與例句翻譯已隱藏。試著自己回想意思，或<strong>點擊灰色遮罩</strong>查看答案！
+  </div>
+
+  <main>
+    <!-- Core Concept Banner (Always visible at top of lesson) -->
+    <section class="card core-concept-card">
+      <h3>💡 最重要的是理解一個概念：</h3>
+      <p>
+        <strong>Precise</strong> 原本與「<span class="recall-target">切走多餘的部分</span>」有關，後來演變成「<span class="recall-target">不多不少、沒有多餘或錯誤的部分</span>」，即是我們現在所說的「<span class="recall-target">精確</span>」。
+      </p>
+    </section>
+
+    <!-- SECTION 1 & 2: ETYMOLOGY & EVOLUTION -->
+    <div id="group-etymology" class="lesson-group">
+      <section class="card">
+        <h2>1. 從字源理解 precise</h2>
+        <p><strong>precise</strong> 最初與 <span class="en-highlight">cut off</span>（<span class="recall-target">切走、截去</span>）有關。</p>
+        <p>它來自拉丁文 <span class="en-highlight">praecidere</span>，意思是：</p>
+        <ul class="styled-list">
+          <li><strong>to cut off or shorten</strong>（<span class="recall-target">切走、縮短</span>）</li>
+        </ul>
+
+        <p>這個字可以拆成兩部分：</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>部分</th>
+                <th>意思</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>prae-</strong></td>
+                <td>before（<span class="recall-target">在前面</span>）</td>
+              </tr>
+              <tr>
+                <td><strong>-cidere</strong></td>
+                <td>to cut（<span class="recall-target">切割</span>）</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>而 <strong>-cidere</strong> 來自拉丁文 <strong>caedere</strong>，意思是 <strong>to cut</strong>（<span class="recall-target">切割</span>）。</p>
+
+        <!-- Interactive Etymology Stages -->
+        <div class="stage-box">
+          <h3>🔍 點擊探索字源演變階段：</h3>
+          <div class="stage-tabs" role="tablist">
+            <button class="stage-btn active" data-stage="0">
+              <span class="stage-step-num">階段 1 • Latin</span>
+              <span class="stage-step-title">拉丁文 praecisus</span>
+            </button>
+            <button class="stage-btn" data-stage="1">
+              <span class="stage-step-num">階段 2 • Old French</span>
+              <span class="stage-step-title">古法語 précis</span>
+            </button>
+            <button class="stage-btn" data-stage="2">
+              <span class="stage-step-num">階段 3 • Mid-15th C.</span>
+              <span class="stage-step-title">15 世紀中期 precise</span>
+            </button>
+          </div>
+
+          <div class="stage-detail" id="etymologyStageContent">
+            <!-- Populated dynamically with exact verbatim text -->
+          </div>
+        </div>
+
+        <h3 style="margin-top: 1.25rem;">🤔 為甚麼「切走多餘部分」會變成「精確」？</h3>
+        <p>你可以想像以下情況：</p>
+        <p>假設你要描述一個物件的長度。</p>
+        <ul class="styled-list">
+          <li>如果你只說「它大約有一米」，這個描述不夠準確。</li>
+          <li>如果你說「它剛好有 100 厘米」，這個描述就更加精確。</li>
+        </ul>
+        <p>當我們把不必要、不準確的部分「切走」，留下最重要、最準確的資料，就能得到一個 <strong>precise</strong> 的描述。</p>
+
+        <p>所以可以用這條思路記住：</p>
+        <div class="flow-chain">
+          <div class="flow-node">
+            <strong>CUT OFF</strong>
+            <span class="recall-target">切走多餘、不必要的部分</span>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">
+            <strong>KEEP ONLY WHAT IS NEEDED</strong>
+            <span class="recall-target">只留下需要的部分</span>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">
+            <strong>PRECISE</strong>
+            <span class="recall-target">準確的、精確的</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>2. precise 的意思如何演變？</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>時期</th>
+                <th>意思</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>拉丁文時期</strong></td>
+                <td>cut off / shorten（<span class="recall-target">切走、縮短</span>）</td>
+              </tr>
+              <tr>
+                <td><strong>14 世紀古法語</strong></td>
+                <td>condensed / cut short（<span class="recall-target">精簡、縮短</span>）</td>
+              </tr>
+              <tr>
+                <td><strong>15 世紀中期</strong></td>
+                <td>exactly stated / with no error（<span class="recall-target">準確表達、沒有錯誤</span>）</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>這個演變背後的概念是：</p>
+        <div class="def-box" style="background: var(--primary-light); border: 1px solid var(--primary-border); text-align:center;">
+          去除多餘的部分 → 保留重要細節 → 不多不少、準確無誤。
+        </div>
+      </section>
+    </div>
+
+    <!-- SECTION 3: THREE PARTS OF SPEECH -->
+    <div id="group-pos" class="lesson-group">
+      <section class="card">
+        <h2>3. precise 的三種詞性</h2>
+        <p>今次要掌握三個字：</p>
+        <ul class="styled-list">
+          <li><strong style="color: var(--noun-color);">precision</strong> — Noun <span class="recall-target">名詞</span></li>
+          <li><strong style="color: var(--adj-color);">precise</strong> — Adjective <span class="recall-target">形容詞</span></li>
+          <li><strong style="color: var(--adv-color);">precisely</strong> — Adverb <span class="recall-target">副詞</span></li>
+        </ul>
+      </section>
+
+      <!-- A. Adjective -->
+      <article class="pos-card pos-adj">
+        <div class="pos-header">
+          <span class="pos-title">A. Adjective 形容詞：precise</span>
+          <span class="pos-badge badge-adj">Adjective 形容詞</span>
+        </div>
+
+        <div class="def-box def-adj">
+          <div>precise = exact and accurate</div>
+          <div style="margin-top: 0.25rem;"><span class="recall-target">準確的；精確的；一絲不苟的。</span></div>
+        </div>
+
+        <p>用來形容一個答案、數字、時間、描述或測量非常準確。</p>
+
+        <h3>例句：</h3>
+        <ul class="example-list">
+          <li>
+            <span class="example-en">The scientist needs precise measurements.</span>
+            <span class="example-zh recall-target">科學家需要精確的測量數據。</span>
+          </li>
+          <li>
+            <span class="example-en">Please give me the precise time of the meeting.</span>
+            <span class="example-zh recall-target">請告訴我會議的確實時間。</span>
+          </li>
+          <li>
+            <span class="example-en">Her instructions were very precise.</span>
+            <span class="example-zh recall-target">她的指示非常清晰準確。</span>
+          </li>
+        </ul>
+
+        <div class="memory-tip">
+          <span class="memory-tip-title">📌 記憶重點：</span>
+          <p>precise 是形容詞，所以通常用來描述某人或某事的特點。</p>
+          <p>例如：</p>
+          <ul class="styled-list" style="margin-bottom:0;">
+            <li><strong>a precise answer</strong>（<span class="recall-target">準確的答案</span>）</li>
+            <li><strong>a precise measurement</strong>（<span class="recall-target">精確的測量</span>）</li>
+            <li><strong>a precise description</strong>（<span class="recall-target">準確的描述</span>）</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- B. Noun -->
+      <article class="pos-card pos-noun">
+        <div class="pos-header">
+          <span class="pos-title">B. Noun 名詞：precision</span>
+          <span class="pos-badge badge-noun">Noun 名詞</span>
+        </div>
+
+        <div class="def-box def-noun">
+          <div>precision = the quality or state of being precise</div>
+          <div style="margin-top: 0.25rem;"><span class="recall-target">準確性；精確度。</span></div>
+        </div>
+
+        <p>它在 17 世紀初開始出現，最初有「切走多餘部分」的意思；到了 18 世紀中期，開始有今天常見的「精確的狀態或特質」這個意思。</p>
+        <p><strong>字形可以這樣記：</strong><br />
+          precise → precision<br />
+          留意：不是 <del>precisement</del>，而是 <strong>precision</strong>。
+        </p>
+
+        <h3>例句：</h3>
+        <ul class="example-list">
+          <li>
+            <span class="example-en">The machine works with great precision.</span>
+            <span class="example-zh recall-target">這部機器運作得非常精確。</span>
+          </li>
+          <li>
+            <span class="example-en">Accuracy and precision are important in science.</span>
+            <span class="example-zh recall-target">準確性和精確度在科學研究中十分重要。</span>
+          </li>
+          <li>
+            <span class="example-en">The surgeon performed the operation with precision.</span>
+            <span class="example-zh recall-target">外科醫生精準地進行手術。</span>
+          </li>
+        </ul>
+
+        <div class="memory-tip">
+          <span class="memory-tip-title">📌 記憶重點：</span>
+          <p>precision 是名詞，表示「精確這種特質」。</p>
+          <p>比較：</p>
+          <ul class="styled-list" style="margin-bottom:0;">
+            <li><strong>The machine is precise.</strong>（<span class="recall-target">這部機器很精確。</span>）</li>
+            <li><strong>The machine works with great precision.</strong>（<span class="recall-target">這部機器運作時有很高的精確度。</span>）</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- C. Adverb -->
+      <article class="pos-card pos-adv">
+        <div class="pos-header">
+          <span class="pos-title">C. Adverb 副詞：precisely</span>
+          <span class="pos-badge badge-adv">Adverb 副詞</span>
+        </div>
+
+        <div class="def-box def-adv">
+          <div>precisely = in an exact or accurate way</div>
+          <div style="margin-top: 0.25rem;"><span class="recall-target">準確地；精確地；恰好。</span></div>
+        </div>
+
+        <p><strong>字形：</strong><br />
+          precise + -ly → precisely<br />
+          注意：precise 結尾的 e 要刪去，才加 -ly。
+        </p>
+
+        <h3>例句：</h3>
+        <ul class="example-list">
+          <li>
+            <span class="example-en">Please follow the instructions precisely.</span>
+            <span class="example-zh recall-target">請準確地按照指示行事。</span>
+          </li>
+          <li>
+            <span class="example-en">The clock shows the time precisely.</span>
+            <span class="example-zh recall-target">這個時鐘準確地顯示時間。</span>
+          </li>
+          <li>
+            <span class="example-en">The train arrived at precisely 8:30 a.m.</span>
+            <span class="example-zh recall-target">火車剛好在早上 8 時 30 分抵達。</span>
+          </li>
+        </ul>
+
+        <div class="memory-tip">
+          <span class="memory-tip-title">📌 記憶重點：</span>
+          <p>precisely 是副詞，通常用來修飾動詞，表示某個動作是如何完成的。</p>
+          <p>例如：</p>
+          <ul class="styled-list" style="margin-bottom:0;">
+            <li><strong>measure precisely</strong>（<span class="recall-target">準確地測量</span>）</li>
+            <li><strong>explain precisely</strong>（<span class="recall-target">準確地解釋</span>）</li>
+            <li><strong>follow instructions precisely</strong>（<span class="recall-target">準確地跟從指示</span>）</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+
+    <!-- SECTION 4 & 5: WORD FAMILY & SPELLING -->
+    <div id="group-family" class="lesson-group">
+      <section class="card">
+        <h2>4. 完整 Word Family 字族整理</h2>
+        <div class="family-grid">
+          <div class="family-item adj">
+            <div class="family-word" style="color: var(--adj-color);">PRECISE</div>
+            <div class="family-pos">Adjective 形容詞</div>
+            <div class="family-meaning"><span class="recall-target">準確的、精確的</span></div>
+          </div>
+          <div class="family-item noun">
+            <div class="family-word" style="color: var(--noun-color);">PRECISION</div>
+            <div class="family-pos">Noun 名詞</div>
+            <div class="family-meaning"><span class="recall-target">準確性、精確度</span></div>
+          </div>
+          <div class="family-item adv">
+            <div class="family-word" style="color: var(--adv-color);">PRECISELY</div>
+            <div class="family-pos">Adverb 副詞</div>
+            <div class="family-meaning"><span class="recall-target">準確地、恰好</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>5. 拼字記憶：特別留意變化</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Word</th>
+                <th>詞性</th>
+                <th>拼字記憶</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color: var(--adj-color);">precise</strong></td>
+                <td>Adjective</td>
+                <td>原形</td>
+              </tr>
+              <tr>
+                <td><strong style="color: var(--noun-color);">precision</strong></td>
+                <td>Noun</td>
+                <td>precise → precision</td>
+              </tr>
+              <tr>
+                <td><strong style="color: var(--adv-color);">precisely</strong></td>
+                <td>Adverb</td>
+                <td>precise + ly，刪去 e</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pitfall-box">
+          <div class="pitfall-title">⚠️ 最容易拼錯的地方：</div>
+          <ol>
+            <li><strong>precision</strong>：不是 <del>preciseness</del>（雖然 preciseness 也是另一個可用名詞，但課本目標是 precision）。</li>
+            <li><strong>precisely</strong>：是 precise + ly，不是 <del>preciseley</del>。</li>
+            <li><strong>precision</strong>：中間是 <strong>sion</strong>，不是 <del>tion</del>。</li>
+          </ol>
+        </div>
+      </section>
+    </div>
+
+    <!-- SECTION 6: QUIZ & FINAL 30-SECOND SUMMARY -->
+    <div id="group-quiz" class="lesson-group">
+      <section class="card">
+        <h2>6. 小測驗：測試你是否真正掌握</h2>
+
+        <div class="quiz-header-bar">
+          <span class="quiz-subtitle">Word Form Practice</span>
+          <span class="quiz-progress-badge" id="answeredCounter">0 / 6 已作答</span>
+        </div>
+
+        <div id="quizContainer"></div>
+
+        <div class="quiz-actions">
+          <button type="button" class="btn-primary" id="checkAnswersBtn">Check my answers</button>
+          <button type="button" class="btn-secondary" id="resetQuizBtn">重新作答 (Reset)</button>
+        </div>
+
+        <div class="score-summary" id="scoreSummary"></div>
+      </section>
+
+      <section class="final-summary-card">
+        <h2>⏱️ 最後 30 秒記憶</h2>
+        <ul>
+          <li><strong>precise</strong> = exact and accurate（<span class="recall-target">準確的</span>）— Adjective</li>
+          <li><strong>precision</strong> = the quality of being precise（<span class="recall-target">精確度</span>）— Noun</li>
+          <li><strong>precisely</strong> = in an exact way（<span class="recall-target">準確地</span>）— Adverb</li>
+        </ul>
+
+        <div class="final-etymology-box">
+          <strong>字源記憶：</strong>
+          <div class="final-etymology-chain">cut off → remove unnecessary parts → leave only what is exact → precise</div>
+          <p>只要記住「切走多餘部分，留下準確的內容」，就能幫助你理解整個 precise 字族。</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // 1. Etymology Interactive Stage Data (100% Verbatim)
+    const etymologyStages = [
+      {
+        html: `
+          <p>後來，<strong>praecidere</strong> 的過去分詞形式 <strong>praecisus</strong>，有「<span class="recall-target">被切走、被縮短</span>」的意思。</p>
+        `
+      },
+      {
+        html: `
+          <p>它再演變成古法語 <strong>précis</strong>，意思包括：</p>
+          <ul class="styled-list" style="margin-bottom:0;">
+            <li><strong>condensed</strong>（<span class="recall-target">精簡的</span>）</li>
+            <li><strong>cut short</strong>（<span class="recall-target">縮短的</span>）</li>
+          </ul>
+        `
+      },
+      {
+        html: `
+          <p>到了 15 世紀中期，<strong>precise</strong> 開始有我們今天熟悉的意思：</p>
+          <ul class="styled-list" style="margin-bottom:0;">
+            <li><strong>exactly stated</strong>（<span class="recall-target">準確地表達</span>）</li>
+            <li><strong>with no error</strong>（<span class="recall-target">沒有錯誤</span>）</li>
+            <li><strong>neither more nor less</strong>（<span class="recall-target">不多不少</span>）</li>
+          </ul>
+        `
+      }
+    ];
+
+    const stageButtons = document.querySelectorAll('.stage-btn');
+    const stageContentEl = document.getElementById('etymologyStageContent');
+
+    function renderStage(index) {
+      stageButtons.forEach((btn, idx) => {
+        btn.classList.toggle('active', idx === index);
+      });
+      stageContentEl.innerHTML = etymologyStages[index].html;
+    }
+
+    stageButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        renderStage(Number(btn.dataset.stage));
+      });
+    });
+
+    // Initialize stage 0
+    renderStage(0);
+
+    // 2. Navigation Tabs Logic
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const groups = {
+      'sec-etymology': document.getElementById('group-etymology'),
+      'sec-pos': document.getElementById('group-pos'),
+      'sec-family': document.getElementById('group-family'),
+      'sec-quiz': document.getElementById('group-quiz')
+    };
+
+    function setActiveTab(target) {
+      tabButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.target === target);
+      });
+
+      if (target === 'sec-all') {
+        Object.values(groups).forEach(el => el.style.display = 'block');
+      } else {
+        Object.entries(groups).forEach(([key, el]) => {
+          el.style.display = key === target ? 'block' : 'none';
+        });
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => setActiveTab(btn.dataset.target));
+    });
+
+    // 3. Recall / Study Mode Toggle & Click-to-Reveal
+    const recallToggle = document.getElementById('recallToggle');
+    recallToggle.addEventListener('change', (e) => {
+      document.body.classList.toggle('recall-mode', e.target.checked);
+      if (!e.target.checked) {
+        document.querySelectorAll('.recall-target.revealed').forEach(el => {
+          el.classList.remove('revealed');
+        });
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (document.body.classList.contains('recall-mode')) {
+        const target = e.target.closest('.recall-target');
+        if (target) {
+          target.classList.toggle('revealed');
+        }
+      }
+    });
+
+    // 4. Interactive Quiz (100% Verbatim Questions & Options)
+    const quizData = [
+      {
+        q: "Question 1. The scientist needs ______ measurements for the experiment.",
+        options: ["precisely", "precision", "precise"],
+        answer: "precise",
+        explanation: "名詞 measurements（測量數據）前面需要用形容詞 precise 來修飾。"
+      },
+      {
+        q: "Question 2. The machine can cut the material with great ______.",
+        options: ["precisely", "precision", "precise"],
+        answer: "precision",
+        explanation: "介系詞 with + 形容詞 great 後面需要接名詞 precision（with great precision）。"
+      },
+      {
+        q: "Question 3. Please follow the instructions ______.",
+        options: ["precisely", "precision", "precise"],
+        answer: "precisely",
+        explanation: "用來修飾動詞 follow（跟從指示的方式），需要用副詞 precisely。"
+      },
+      {
+        q: "Question 4. Which word means 'the quality of being exact and accurate'?",
+        options: ["precisely", "precision", "precise"],
+        answer: "precision",
+        explanation: "precision (Noun) = the quality or state of being precise（準確性；精確度）。"
+      },
+      {
+        q: "Question 5. The word precise originally came from a Latin word meaning ______.",
+        options: ["to entertain", "to cut off or shorten", "to hold together"],
+        answer: "to cut off or shorten",
+        explanation: "拉丁文 praecidere 的意思是 to cut off or shorten（切走、縮短）。"
+      },
+      {
+        q: "Question 6. Choose the correct spelling.",
+        options: ["precisely", "preciseley", "precisly"],
+        answer: "precisely",
+        explanation: "precise + ly，刪去結尾的 e，正確拼法是 precisely。"
+      }
+    ];
+
+    const userSelections = new Array(quizData.length).fill(null);
+    const quizContainer = document.getElementById('quizContainer');
+    const answeredCounter = document.getElementById('answeredCounter');
+    const checkAnswersBtn = document.getElementById('checkAnswersBtn');
+    const resetQuizBtn = document.getElementById('resetQuizBtn');
+    const scoreSummary = document.getElementById('scoreSummary');
+
+    function renderQuiz() {
+      quizContainer.innerHTML = '';
+      quizData.forEach((item, qIdx) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `q-card-${qIdx}`;
+
+        const qTitle = document.createElement('div');
+        qTitle.className = 'question-text';
+        qTitle.textContent = item.q;
+        card.appendChild(qTitle);
+
+        const optionsDiv = document.createElement('div');
+        optionsDiv.className = 'options-grid';
+
+        item.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'option-btn';
+          btn.textContent = opt;
+          btn.dataset.qIdx = qIdx;
+          btn.dataset.opt = opt;
+
+          btn.addEventListener('click', () => selectOption(qIdx, opt));
+          optionsDiv.appendChild(btn);
+        });
+
+        card.appendChild(optionsDiv);
+
+        const feedback = document.createElement('div');
+        feedback.className = 'feedback-msg';
+        feedback.id = `feedback-${qIdx}`;
+        card.appendChild(feedback);
+
+        quizContainer.appendChild(card);
+      });
+    }
+
+    function updateCounter() {
+      const answeredCount = userSelections.filter(val => val !== null).length;
+      answeredCounter.textContent = `${answeredCount} / ${quizData.length} 已作答`;
+    }
+
+    function selectOption(qIdx, opt) {
+      userSelections[qIdx] = opt;
+      updateCounter();
+
+      const card = document.getElementById(`q-card-${qIdx}`);
+      card.classList.remove('correct', 'incorrect');
+
+      const btns = card.querySelectorAll('.option-btn');
+      btns.forEach(b => {
+        b.classList.remove('selected', 'correct-choice', 'wrong-choice');
+        if (b.dataset.opt === opt) {
+          b.classList.add('selected');
+        }
+      });
+
+      const feedback = document.getElementById(`feedback-${qIdx}`);
+      feedback.classList.remove('show', 'ok', 'err');
+    }
+
+    checkAnswersBtn.addEventListener('click', () => {
+      let score = 0;
+
+      quizData.forEach((item, qIdx) => {
+        const selected = userSelections[qIdx];
+        const card = document.getElementById(`q-card-${qIdx}`);
+        const btns = card.querySelectorAll('.option-btn');
+        const feedback = document.getElementById(`feedback-${qIdx}`);
+
+        card.classList.remove('correct', 'incorrect');
+        btns.forEach(b => b.classList.remove('correct-choice', 'wrong-choice'));
+
+        if (selected === item.answer) {
+          score++;
+          card.classList.add('correct');
+          btns.forEach(b => {
+            if (b.dataset.opt === item.answer) b.classList.add('correct-choice');
+          });
+          feedback.className = 'feedback-msg show ok';
+          feedback.textContent = `✓ 正確！${item.explanation}`;
+        } else {
+          card.classList.add('incorrect');
+          btns.forEach(b => {
+            if (b.dataset.opt === item.answer) b.classList.add('correct-choice');
+            if (selected && b.dataset.opt === selected) b.classList.add('wrong-choice');
+          });
+          feedback.className = 'feedback-msg show err';
+          const statusText = selected ? `✗ 你的選擇是 "${selected}"，正確答案是 "${item.answer}"。` : `⚠️ 尚未作答，正確答案是 "${item.answer}"。`;
+          feedback.textContent = `${statusText}${item.explanation}`;
+        }
+      });
+
+      scoreSummary.className = 'score-summary show';
+      const pct = Math.round((score / quizData.length) * 100);
+      let comment = score === 6 ? '太棒了！你已完全掌握 precise 字族！' :
+                    score >= 4 ? '做得很好！再複習一下答錯的題目就滿分了。' :
+                    '建議再回顧一下詞性用法與拼字變化，然後重新挑戰！';
+      scoreSummary.textContent = `測驗成績：${score} / ${quizData.length} 題答對 (${pct}%) — ${comment}`;
+    });
+
+    resetQuizBtn.addEventListener('click', () => {
+      userSelections.fill(null);
+      updateCounter();
+      scoreSummary.classList.remove('show');
+      renderQuiz();
+    });
+
+    renderQuiz();
+  </script>
+</body>
+</html>
